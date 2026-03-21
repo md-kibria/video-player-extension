@@ -57,7 +57,7 @@ video {
   transition: opacity 180ms ease, transform 180ms ease, background 180ms ease;
 }
 
-.player-shell:hover .hover-toggle-btn {
+.player-shell.hover-ui-visible .hover-toggle-btn {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
   pointer-events: auto;
@@ -91,7 +91,7 @@ video {
   pointer-events: none;
 }
 
-.player-shell:hover .file-name-overlay {
+.player-shell.hover-ui-visible .file-name-overlay {
   opacity: 1;
   transform: translateY(0);
 }

@@ -1,5 +1,6 @@
 const params = new URLSearchParams(window.location.search);
 const source = params.get("src");
+const playerShell = document.querySelector(".player-shell");
 const video = document.getElementById("video");
 const toastEl = document.getElementById("toast");
 const playPauseBtn = document.getElementById("playPauseBtn");
@@ -16,6 +17,7 @@ const VOLUME_STORAGE_KEY = "videoPopupPlayerVolume";
 
 let metadataTimer = null;
 let toastTimer = null;
+let hoverUiTimer = null;
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds)) {
@@ -59,6 +61,19 @@ function clearTimer() {
     clearTimeout(metadataTimer);
     metadataTimer = null;
   }
+}
+
+function showHoverUiTemporarily() {
+  playerShell.classList.add("hover-ui-visible");
+  clearTimeout(hoverUiTimer);
+  hoverUiTimer = setTimeout(() => {
+    playerShell.classList.remove("hover-ui-visible");
+  }, 5000);
+}
+
+function hideHoverUi() {
+  clearTimeout(hoverUiTimer);
+  playerShell.classList.remove("hover-ui-visible");
 }
 
 function clampVolume(value) {
@@ -246,6 +261,18 @@ video.addEventListener("click", () => {
   togglePlayback();
 });
 
+playerShell.addEventListener("mouseenter", () => {
+  showHoverUiTemporarily();
+});
+
+playerShell.addEventListener("mousemove", () => {
+  showHoverUiTemporarily();
+});
+
+playerShell.addEventListener("mouseleave", () => {
+  hideHoverUi();
+});
+
 document.addEventListener("keydown", (event) => {
   if (!video.src) {
     return;
@@ -284,6 +311,10 @@ document.addEventListener("keydown", (event) => {
   } else if (event.key.toLowerCase() === "f") {
     event.preventDefault();
     toggleFullscreen().catch(() => {});
+  } else if (event.key.toLowerCase() === "m") {
+    event.preventDefault();
+    video.muted = !video.muted;
+    updateMuteButton();
   }
 });
 
