@@ -16,6 +16,7 @@ const speedOptions = document.querySelectorAll(".speed-option");
 const hoverToggleBtn = document.getElementById("hoverToggleBtn");
 const fileNameOverlay = document.getElementById("fileNameOverlay");
 const seekTooltip = document.getElementById("seekTooltip");
+const volumeTooltip = document.getElementById("volumeTooltip");
 const VOLUME_STORAGE_KEY = "videoPopupPlayerVolume";
 
 let metadataTimer = null;
@@ -119,7 +120,10 @@ function togglePlayback() {
 
 function getSeekRatioFromClientX(clientX) {
   const seekRect = seekBar.getBoundingClientRect();
-  return Math.min(1, Math.max(0, (clientX - seekRect.left) / seekRect.width));
+  const padding = 7;
+  const trackWidth = seekRect.width - (padding * 2);
+  const clickX = clientX - seekRect.left - padding;
+  return Math.min(1, Math.max(0, clickX / trackWidth));
 }
 
 function seekFromClientX(clientX) {
@@ -378,6 +382,48 @@ seekBar.addEventListener("click", (event) => {
 
 seekBar.addEventListener("mouseleave", () => {
   seekTooltip.classList.remove("visible");
+});
+
+function getVolumeRatioFromClientX(clientX) {
+  const volRect = volumeBar.getBoundingClientRect();
+  const padding = 7;
+  const trackWidth = volRect.width - (padding * 2);
+  const clickX = clientX - volRect.left - padding;
+  return Math.min(1, Math.max(0, clickX / trackWidth));
+}
+
+function setVolumeFromClientX(clientX) {
+  const ratio = getVolumeRatioFromClientX(clientX);
+  const nextVolume = Math.round(ratio * 100) / 100;
+  volumeBar.value = String(nextVolume);
+  video.volume = nextVolume;
+  video.muted = nextVolume === 0;
+  saveVolume(nextVolume);
+  updateMuteButton();
+}
+
+volumeBar.addEventListener("mousemove", (event) => {
+  const volRect = volumeBar.getBoundingClientRect();
+  const shellRect = video.getBoundingClientRect();
+  const ratio = getVolumeRatioFromClientX(event.clientX);
+  const volumeAtPointer = Math.round(ratio * 100);
+  volumeTooltip.textContent = `${volumeAtPointer}%`;
+  volumeTooltip.classList.add("visible");
+
+  const padding = 24;
+  const minLeft = shellRect.left + padding;
+  const maxLeft = shellRect.right - padding;
+  const clampedX = Math.min(maxLeft, Math.max(minLeft, event.clientX));
+  volumeTooltip.style.left = `${clampedX - shellRect.left}px`;
+});
+
+volumeBar.addEventListener("mouseleave", () => {
+  volumeTooltip.classList.remove("visible");
+});
+
+volumeBar.addEventListener("click", (event) => {
+  event.preventDefault();
+  setVolumeFromClientX(event.clientX);
 });
 
 muteBtn.addEventListener("click", () => {

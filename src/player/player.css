@@ -183,7 +183,8 @@ video {
   color: #fff;
 }
 
-.seek-tooltip {
+.seek-tooltip,
+.volume-tooltip {
   position: absolute;
   bottom: 64px;
   transform: translateX(-50%);
@@ -199,7 +200,8 @@ video {
   transition: opacity 140ms ease;
 }
 
-.seek-tooltip.visible {
+.seek-tooltip.visible,
+.volume-tooltip.visible {
   opacity: 1;
 }
 
@@ -315,7 +317,8 @@ video {
     font-size: 1.4rem;
   }
 
-  .seek-tooltip {
+  .seek-tooltip,
+  .volume-tooltip {
     bottom: 94px;
   }
 
@@ -341,5 +344,10 @@ video {
 
   .speed-icon {
     font-size: 17px !important;
+  }
+
+  .seek-tooltip,
+  .volume-tooltip {
+    bottom: 54px;
   }
 }
