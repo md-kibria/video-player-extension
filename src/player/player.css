@@ -102,13 +102,85 @@ video {
   right: 14px;
   bottom: 12px;
   display: grid;
-  grid-template-columns: auto auto 1fr auto auto 120px auto;
+  grid-template-columns: auto auto 1fr auto auto auto 120px auto;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
   border-radius: 14px;
   background: linear-gradient(180deg, rgba(2, 6, 23, 0.72), rgba(15, 23, 42, 0.85));
   border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.speed-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.speed-btn {
+  background: transparent;
+  border: 0;
+  color: #dbeafe;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 10px;
+  transition: background 180ms ease;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.speed-btn:hover {
+  background: rgba(59, 130, 246, 0.16);
+}
+
+.speed-menu {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 10px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+  z-index: 10;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.speed-menu.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.speed-option {
+  background: transparent;
+  border: 0;
+  color: #cbd5e1;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: center;
+  font-weight: 500;
+  transition: background 150ms;
+}
+
+.speed-option:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #fff;
+}
+
+.speed-option.active {
+  background: rgba(59, 130, 246, 0.6);
+  color: #fff;
 }
 
 .seek-tooltip {
@@ -248,7 +320,7 @@ video {
   }
 
   .controls {
-    grid-template-columns: auto auto minmax(70px, 1fr) auto auto minmax(56px, 18vw) auto;
+    grid-template-columns: auto auto minmax(70px, 1fr) auto auto auto minmax(56px, 18vw) auto;
     gap: 6px;
     padding: 8px 10px;
   }
@@ -265,5 +337,9 @@ video {
 
   #volumeBar {
     max-width: 100%;
+  }
+
+  .speed-icon {
+    font-size: 17px !important;
   }
 }

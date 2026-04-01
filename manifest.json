@@ -24,6 +24,7 @@
       "resources": [
         "src/player/player.html",
         "src/player/player.css",
+        "src/player/mkv-subs.js",
         "src/player/player.js"
       ],
       "matches": [

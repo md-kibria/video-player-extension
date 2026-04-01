@@ -19,6 +19,16 @@
         <span id="currentTime" class="time">00:00</span>
         <input id="seekBar" class="range seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Seek">
         <span id="duration" class="time">00:00</span>
+        <div class="speed-container">
+          <button id="speedBtn" class="icon-btn" type="button" aria-label="Playback speed"><span class="material-symbols-rounded speed-icon">speed</span></button>
+          <div id="speedMenu" class="speed-menu">
+            <button class="speed-option" data-speed="2">2x</button>
+            <button class="speed-option" data-speed="1.5">1.5x</button>
+            <button class="speed-option" data-speed="1.25">1.25x</button>
+            <button class="speed-option active" data-speed="1">1x</button>
+            <button class="speed-option" data-speed="0.5">0.5x</button>
+          </div>
+        </div>
         <button id="muteBtn" class="icon-btn" type="button" aria-label="Mute or unmute">🔊</button>
         <input id="volumeBar" class="range volume" type="range" min="0" max="1" value="1" step="0.01" aria-label="Volume">
         <button id="fullscreenBtn" class="icon-btn" type="button" aria-label="Fullscreen">⛶</button>
@@ -26,6 +36,7 @@
       <div id="seekTooltip" class="seek-tooltip">00:00</div>
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
     </main>
+    <script src="./mkv-subs.js"></script>
     <script src="./player.js"></script>
   </body>
 </html>
