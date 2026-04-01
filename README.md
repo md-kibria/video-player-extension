@@ -19,6 +19,7 @@ A Chrome/Brave Manifest V3 extension that intercepts direct video file links and
   - custom play/pause button
   - seek bar with hover time tooltip
   - current time and duration display
+  - playback speed dropdown menu (0.5x to 2x)
   - mute/unmute and custom volume slider
   - fullscreen button (video-only fullscreen)
 - Center hover overlay:
@@ -26,6 +27,7 @@ A Chrome/Brave Manifest V3 extension that intercepts direct video file links and
   - click to toggle playback
 - Hover metadata:
   - filename overlay shown at the bottom of the player
+  - embedded MKV Title extracted automatically if available
 - Keyboard shortcuts:
   - `ArrowRight`: forward 10s
   - `ArrowLeft`: backward 10s
@@ -70,6 +72,11 @@ Note: Detection is extension-based, but playback depends on browser codec suppor
 - `.mkv` is only a container format.
 - If underlying codec is not supported by Chrome/Brave, playback may fail.
 - In that case, the player shows a clear unsupported-format message.
+
+## MKV Subtitle & Metadata Extraction
+
+- **Subtitles**: The player natively parses `.mkv` streams on-the-fly to extract embedded text subtitles (SRT, ASS) and injects them as standard WebVTT tracks, allowing native browser playback with subtitles!
+- **Title Metadata**: The parser also reads the internal `Segment Title` metadata of the MKV file and automatically updates the player UI to show the real video title (if present) instead of just the URL filename.
 
 ## Manual Test Checklist
 
