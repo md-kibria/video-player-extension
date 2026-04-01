@@ -444,6 +444,17 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
+  const active = document.activeElement;
+  // if any button/input/select/etc focused → ignore
+  if (
+    active.tagName === 'BUTTON' ||
+    active.tagName === 'INPUT' ||
+    active.tagName === 'TEXTAREA' ||
+    active.tagName === 'SELECT'
+  ) {
+    return;
+  }
+
   const activeTag = document.activeElement?.tagName?.toLowerCase();
   if (activeTag === "input" || activeTag === "textarea") {
     return;
