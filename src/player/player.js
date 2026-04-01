@@ -68,15 +68,18 @@ function clearTimer() {
 
 function showHoverUiTemporarily() {
   playerShell.classList.add("hover-ui-visible");
+  playerShell.style.removeProperty("cursor");
   clearTimeout(hoverUiTimer);
   hoverUiTimer = setTimeout(() => {
     playerShell.classList.remove("hover-ui-visible");
+    playerShell.style.cursor = "none";
   }, 5000);
 }
 
 function hideHoverUi() {
   clearTimeout(hoverUiTimer);
   playerShell.classList.remove("hover-ui-visible");
+  playerShell.style.removeProperty("cursor");
 }
 
 function clampVolume(value) {
@@ -98,17 +101,17 @@ function saveVolume(volume) {
 
 async function toggleFullscreen() {
   if (document.fullscreenElement === video) {
-    await document.exitFullscreen().catch(() => {});
+    await document.exitFullscreen().catch(() => { });
     return;
   }
   if (video.requestFullscreen) {
-    await video.requestFullscreen().catch(() => {});
+    await video.requestFullscreen().catch(() => { });
   }
 }
 
 function togglePlayback() {
   if (video.paused) {
-    video.play().catch(() => {});
+    video.play().catch(() => { });
   } else {
     video.pause();
   }
@@ -159,25 +162,25 @@ function formatVTTTime(ms) {
 
 function extractMKVTitle(uint8Array) {
   for (let i = 0; i < uint8Array.length - 10; i++) {
-    if (uint8Array[i] === 0x7b && uint8Array[i+1] === 0xa9) {
-      const sizeByte = uint8Array[i+2];
+    if (uint8Array[i] === 0x7b && uint8Array[i + 1] === 0xa9) {
+      const sizeByte = uint8Array[i + 2];
       let titleLength = 0;
       let dataOffset = 0;
-      
+
       if ((sizeByte & 0x80) !== 0) {
         titleLength = sizeByte & 0x7f;
         dataOffset = i + 3;
       } else if ((sizeByte & 0x40) !== 0) {
-        titleLength = ((sizeByte & 0x3f) << 8) | uint8Array[i+3];
+        titleLength = ((sizeByte & 0x3f) << 8) | uint8Array[i + 3];
         dataOffset = i + 4;
       }
-      
+
       if (titleLength > 0 && titleLength < 1000 && dataOffset + titleLength <= uint8Array.length) {
         const titleBytes = uint8Array.slice(dataOffset, dataOffset + titleLength);
         const titleText = new TextDecoder("utf-8").decode(titleBytes);
         // Only return if it looks like a valid string (no null terminators)
         if (titleText && !titleText.includes('\x00')) {
-            return titleText;
+          return titleText;
         }
       }
     }
@@ -235,7 +238,7 @@ async function extractMKVSubtitles(url) {
     let trackCount = 0;
     for (const [trackNumber, subs] of subsByTrack.entries()) {
       if (subs.length === 0) continue;
-      
+
       const trackInfo = trackInfos.get(trackNumber);
       let vttContent = "WEBVTT\n\n";
 
@@ -244,13 +247,13 @@ async function extractMKVSubtitles(url) {
       subs.forEach((sub, index) => {
         const start = formatVTTTime(sub.time);
         const end = formatVTTTime(sub.time + sub.duration);
-        
+
         let text = sub.text || "";
         if (trackInfo.type === "ass" || trackInfo.type === "ssa") {
-            const rawText = text.replace(/\{[^}]+\}/g, "");
-            text = rawText.split("\\N").join("\n").replace(/\r\n/g, "\n");
+          const rawText = text.replace(/\{[^}]+\}/g, "");
+          text = rawText.split("\\N").join("\n").replace(/\r\n/g, "\n");
         } else {
-            text = text.replace(/\r\n/g, "\n");
+          text = text.replace(/\r\n/g, "\n");
         }
 
         vttContent += `${index + 1}\n${start} --> ${end}\n${text}\n\n`;
@@ -263,7 +266,7 @@ async function extractMKVSubtitles(url) {
       trackEl.label = trackInfo.name || trackInfo.language || `Track ${trackNumber}`;
       trackEl.srclang = trackInfo.language || "en";
       trackEl.src = objectUrl;
-      
+
       if (firstTrack) {
         trackEl.default = true;
         firstTrack = false;
@@ -271,7 +274,7 @@ async function extractMKVSubtitles(url) {
       video.appendChild(trackEl);
       trackCount++;
     }
-    
+
     if (trackCount > 0) {
       showToast(`${trackCount} subtitle track(s) loaded`);
     } else {
@@ -393,7 +396,7 @@ speedOptions.forEach(btn => {
     const speed = parseFloat(btn.dataset.speed);
     video.playbackRate = speed;
     // speedBtn.textContent = btn.textContent;
-    
+
     speedOptions.forEach(opt => opt.classList.remove("active"));
     btn.classList.add("active");
     speedMenu.classList.remove("visible");
@@ -444,19 +447,14 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
-  const active = document.activeElement;
-  // if any button/input/select/etc focused → ignore
-  if (
-    active.tagName === 'BUTTON' ||
-    active.tagName === 'INPUT' ||
-    active.tagName === 'TEXTAREA' ||
-    active.tagName === 'SELECT'
-  ) {
-    return;
-  }
-
   const activeTag = document.activeElement?.tagName?.toLowerCase();
-  if (activeTag === "input" || activeTag === "textarea") {
+  // if any button/input/select/textarea focused → ignore global shortcuts
+  if (
+    activeTag === "button" ||
+    activeTag === "input" ||
+    activeTag === "textarea" ||
+    activeTag === "select"
+  ) {
     return;
   }
 
@@ -487,13 +485,15 @@ document.addEventListener("keydown", (event) => {
     togglePlayback();
   } else if (event.key.toLowerCase() === "f") {
     event.preventDefault();
-    toggleFullscreen().catch(() => {});
+    toggleFullscreen().catch(() => { });
   } else if (event.key.toLowerCase() === "m") {
     event.preventDefault();
     video.muted = !video.muted;
     updateMuteButton();
   }
 });
+
+
 
 updatePlayButton();
 updateMuteButton();
