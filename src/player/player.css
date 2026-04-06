@@ -17,6 +17,7 @@ body {
 .player-shell {
   position: relative;
   width: min(1200px, 96vw);
+  max-height: 100vh;
   border-radius: 18px;
   padding: 10px 10px 74px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));

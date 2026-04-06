@@ -254,7 +254,7 @@ async function extractMKVSubtitles(url) {
         }
       }
     }
-    
+
     try {
       parser.end();
     } catch (err) {
@@ -519,12 +519,15 @@ document.addEventListener("keydown", (event) => {
   }
 
   const activeTag = document.activeElement?.tagName?.toLowerCase();
-  // if any button/input/select/textarea focused → ignore global shortcuts
+  const isGlobalShortcut = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", " ", "f", "F", "m", "M"].includes(event.key);
+
+  // if any button/input/select/textarea focused → ignore global shortcuts (except our custom media keys)
   if (
-    activeTag === "button" ||
-    activeTag === "input" ||
-    activeTag === "textarea" ||
-    activeTag === "select"
+    !isGlobalShortcut &&
+    (activeTag === "button" ||
+      activeTag === "input" ||
+      activeTag === "textarea" ||
+      activeTag === "select")
   ) {
     return;
   }
