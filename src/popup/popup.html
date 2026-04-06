@@ -4,69 +4,274 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Video Popup Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --bg-color: #0f172a;
+        --card-bg: #1e293b;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --accent: #3b82f6;
+        --accent-hover: #2563eb;
+        --border: #334155;
+        --success: #10b981;
+      }
+      
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         margin: 0;
-        padding: 12px;
-        width: 330px;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        width: 320px;
+        padding: 16px;
+        box-sizing: border-box;
       }
+
       h2 {
-        margin: 0 0 8px;
-        font-size: 1rem;
+        margin: 0 0 16px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-main);
       }
+
+      h2 svg {
+        width: 20px;
+        height: 20px;
+        color: var(--accent);
+      }
+
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
       .row {
-        margin-bottom: 10px;
+        margin-bottom: 16px;
       }
-      label {
+      .row:last-child {
+        margin-bottom: 0px;
+      }
+
+      .toggle-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
         font-size: 0.9rem;
+        font-weight: 500;
+        user-select: none;
       }
+
+      .toggle-switch input {
+        display: none;
+      }
+
+      .slider {
+        position: relative;
+        width: 36px;
+        height: 20px;
+        background-color: var(--border);
+        border-radius: 20px;
+        transition: 0.3s;
+      }
+
+      .slider::before {
+        content: "";
+        position: absolute;
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+
+      input:checked + .slider {
+        background-color: var(--accent);
+      }
+
+      input:checked + .slider::before {
+        transform: translateX(16px);
+      }
+
+      label.input-label {
+        display: block;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+
       input[type="text"] {
         width: 100%;
         box-sizing: border-box;
-      }
-      #status {
-        min-height: 1.2rem;
-        color: #1a73e8;
+        background-color: #0f172a;
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        padding: 8px 10px;
+        border-radius: 6px;
         font-size: 0.85rem;
+        font-family: inherit;
+        transition: border-color 0.2s, box-shadow 0.2s;
       }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+
+      input[type="text"]::placeholder {
+        color: #475569;
+      }
+
+      button {
+        width: 100%;
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+        font-family: inherit;
+      }
+
+      button:hover {
+        background-color: var(--accent-hover);
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      #status {
+        /* min-height: 20px; */
+        color: var(--success);
+        font-size: 0.85rem;
+        text-align: center;
+        margin-top: 8px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      
+      #status:not(:empty) {
+        opacity: 1;
+      }
+
+      .recent-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .recent-header strong {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .muted {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+      }
+
       ul {
-        margin: 8px 0 0;
-        padding-left: 16px;
-        max-height: 130px;
-        overflow: auto;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        max-height: 180px;
+        overflow-y: auto;
+        border-radius: 6px;
       }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+      }
+
       li {
         font-size: 0.8rem;
+        padding: 6px 8px;
+        background-color: #0f172a;
+        margin-bottom: 4px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
         word-break: break-all;
+        color: var(--text-muted);
       }
-      .muted {
-        color: #666;
-        font-size: 0.8rem;
+      li:last-child {
+        margin-bottom: 0;
+      }
+
+      ul li a {
+        color: var(--text-main);
+        text-decoration: none;
+      }
+
+      ul li a:hover {
+        color: var(--accent);
+        text-decoration: underline;
       }
     </style>
   </head>
   <body>
-    <h2>Video Popup Player</h2>
-    <div class="row">
-      <label>
-        <input id="enabled" type="checkbox">
-        Enable direct video link interception
-      </label>
+    <h2>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <polygon points="10 13 10 18 15 15.5 10 13"></polygon>
+      </svg>
+      Settings & History
+    </h2>
+    
+    <div class="card">
+      <div class="row">
+        <label class="toggle-switch">
+          Enable link interception
+          <input id="enabled" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row">
+        <label class="input-label" for="extInput">Allowed extensions (CSV)</label>
+        <input id="extInput" type="text" placeholder="mkv, mp4, webm, mov">
+      </div>
+      <div>
+        <button id="saveBtn" type="button">Save Settings</button>
+      </div>
+      <div id="status"></div>
     </div>
-    <div class="row">
-      <label for="extInput">Allowed extensions (comma-separated)</label>
-      <input id="extInput" type="text" placeholder="mkv,mp4,webm,mov">
-    </div>
-    <div class="row">
-      <button id="saveBtn" type="button">Save Settings</button>
-    </div>
-    <div id="status"></div>
-    <div class="row">
-      <strong>Recent intercepted links</strong>
-      <div class="muted">Most recent first</div>
+
+    <div class="card">
+      <div class="recent-header">
+        <strong>Recent Links</strong>
+        <div class="muted">Most recent first</div>
+      </div>
       <ul id="recentList"></ul>
     </div>
+
     <script src="./popup.js"></script>
   </body>
 </html>

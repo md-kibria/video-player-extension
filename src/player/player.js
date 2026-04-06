@@ -15,6 +15,7 @@ const speedMenu = document.getElementById("speedMenu");
 const speedOptions = document.querySelectorAll(".speed-option");
 const hoverToggleBtn = document.getElementById("hoverToggleBtn");
 const fileNameOverlay = document.getElementById("fileNameOverlay");
+const mainTitle = document.getElementById("mainTitle");
 const seekTooltip = document.getElementById("seekTooltip");
 const volumeTooltip = document.getElementById("volumeTooltip");
 const VOLUME_STORAGE_KEY = "videoPopupPlayerVolume";
@@ -28,8 +29,13 @@ function formatTime(seconds) {
     return "00:00";
   }
   const totalSeconds = Math.max(0, Math.floor(seconds));
-  const minutes = Math.floor(totalSeconds / 60);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
   const secs = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
   return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
 
@@ -67,14 +73,14 @@ function clearTimer() {
   }
 }
 
-function showHoverUiTemporarily() {
+function showHoverUiTemporarily(time = 5000) {
   playerShell.classList.add("hover-ui-visible");
   playerShell.style.removeProperty("cursor");
   clearTimeout(hoverUiTimer);
   hoverUiTimer = setTimeout(() => {
     playerShell.classList.remove("hover-ui-visible");
     playerShell.style.cursor = "none";
-  }, 5000);
+  }, time);
 }
 
 function hideHoverUi() {
@@ -192,6 +198,7 @@ function extractMKVTitle(uint8Array) {
   return null;
 }
 
+
 async function extractMKVSubtitles(url) {
   try {
     const response = await fetch(url);
@@ -230,13 +237,31 @@ async function extractMKVSubtitles(url) {
           const mkvTitle = extractMKVTitle(value);
           if (mkvTitle) {
             fileNameOverlay.textContent = mkvTitle;
+            mainTitle.textContent = mkvTitle;
             mkvTitleFound = true;
           }
         }
-        parser.write(value);
+        try {
+          parser.write(value);
+        } catch (err) {
+          if (err && err.message && err.message.includes("Unrepresentable length")) {
+            // Ignore this error, which happens when segment length is unknown.
+            // Break gracefully to process any data already parsed.
+            break;
+          }
+          console.warn("MKV parsing error:", err);
+          break;
+        }
       }
     }
-    parser.end();
+    
+    try {
+      parser.end();
+    } catch (err) {
+      if (!err || !err.message || !err.message.includes("Unrepresentable length")) {
+        console.warn("MKV parser end error:", err);
+      }
+    }
 
     let firstTrack = true;
     let trackCount = 0;
@@ -529,6 +554,8 @@ document.addEventListener("keydown", (event) => {
   } else if (event.key === " ") {
     event.preventDefault();
     togglePlayback();
+    // Show hover ui temporarily
+    showHoverUiTemporarily(500);
   } else if (event.key.toLowerCase() === "f") {
     event.preventDefault();
     toggleFullscreen().catch(() => { });
@@ -550,4 +577,5 @@ volumeBar.value = String(initialVolume);
 currentTimeEl.textContent = "00:00";
 durationEl.textContent = "00:00";
 fileNameOverlay.textContent = getFileName(source);
+mainTitle.textContent = getFileName(source);
 loadVideo();

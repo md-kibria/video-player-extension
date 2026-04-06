@@ -20,6 +20,20 @@ function normalizeExtensions(raw) {
   return parsed.length ? [...new Set(parsed)] : DEFAULT_EXTENSIONS;
 }
 
+/* THIS FUNCTION IS FROM PLAYER.JS */
+function getFileName(rawUrl) {
+  if (!rawUrl) {
+    return "Unknown file";
+  }
+  try {
+    const parsed = new URL(rawUrl);
+    const name = decodeURIComponent(parsed.pathname.split("/").pop() || "");
+    return name || "Unknown file";
+  } catch (_) {
+    return "Unknown file";
+  }
+}
+
 async function loadSettings() {
   const result = await chrome.storage.local.get([SETTINGS_KEY, RECENT_KEY]);
   const settings = result[SETTINGS_KEY] || {};
@@ -40,7 +54,11 @@ async function loadSettings() {
 
   for (const item of recent) {
     const li = document.createElement("li");
-    li.textContent = item.url || String(item);
+    const a = document.createElement("a");
+    a.href = item.url || String(item);
+    a.target = "_blank";
+    a.textContent = getFileName(item.url || String(item));
+    li.appendChild(a);
     recentList.appendChild(li);
   }
 }
