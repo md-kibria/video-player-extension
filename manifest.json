@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Video Player",
+  "name": "Instant Video Player",
   "version": "1.0.0",
   "description": "Open direct video links in an extension player page instead of downloading.",
   "permissions": [
@@ -16,8 +16,20 @@
     "service_worker": "src/background.js"
   },
   "action": {
-    "default_title": "Video Player",
-    "default_popup": "src/popup/popup.html"
+    "default_title": "Instant Video Player",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "src/logos/logo.png",
+      "32": "src/logos/logo.png",
+      "48": "src/logos/logo.png",
+      "128": "src/logos/logo.png"
+    }
+  },
+  "icons": {
+    "16": "src/logos/logo.png",
+    "32": "src/logos/logo.png",
+    "48": "src/logos/logo.png",
+    "128": "src/logos/logo.png"
   },
   "web_accessible_resources": [
     {

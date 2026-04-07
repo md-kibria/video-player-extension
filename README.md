@@ -1,4 +1,4 @@
-# Video Player Extension
+# Instant Video Player Extension
 
 A Chrome/Brave Manifest V3 extension that intercepts direct video file links and opens them in a modern extension player instead of triggering normal file download behavior (when browser playback is supported).
 
